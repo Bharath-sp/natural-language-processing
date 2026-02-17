@@ -1,0 +1,34 @@
+= NLP Basics =
+:doctype: book
+:author: Bharath Kumar S P
+:email: bharath030195@gmail.com
+:stem: latexmath
+:toc:
+
+== Introduction ==
+NLP is an area of computer science and artificial intelligence concerned of the interactions between computers and human (i.e., natural languages), in particular, how to program computers to process and analyze large amounts of natural language data. Text data is highly unstructured and can be in multiple languages. A computer needs specialized processing techniques in order to "understand" the raw text data. 
+
+Natural language processing attempts to use a variety of techniques in order to create structure out of raw text data. We will be discussing some of these basic techniques, which are built into libraries such as Spacy and NLTK.
+
+*Reference Books:*
+
+. Daniel Jurafsky and James H. Martin. 2009. Speech and Language Processing: An introduction to Natural Language Processing, Speech Recognition, and Computational Linguistics. 2nd Edition.
+. Chrsitopher D. Manning and Hinrich Schutze. 1999. Foundations of Statistical Natural Language Processing.
+
+== Python Libraries for NLP ==
+*Spacy* is an open source Natural Language Processing library for Python. It is designed to effectively handle NLP tasks with the most efficient implementation of common algorithms. For many NLP tasks, Spacy has only one implemented method. We don't have the option to choose other algorithms.
+
+*NLTK* - Natural Language ToolKit is a very popular open source NLP library for Python. It also provides many functionalities, but include less efficient implementations.
+
+For many common NLP tasks, Spacy is much faster and more efficient than NLTK. However, Spacy doesn't include pre-created models for some applications, such as sentiment analysis, which is typically easier to perform with NLTK.
+
+== Spacy Basics ==
+We need to install the package `spacy` and download the specific model based on the language we want, the language library. In our case, we download the English language library.
+
+. Run the Anaconda prompt (miniconda) as Administrator.
+. Type `python -m spacy download en`. This will download en_core_web_sm==2.0.0 from https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz#egg=en_core_web_sm==2.0.0 in c:\users\bharath-asus\miniconda3\envs\nlp_course\lib\site-packages
+. And it also creates a symbolic link to link the model to `'en'`.
+
+NOTE: We should have the admin permission to create this link.
+
+On creating this link, we could see a folder 'en' created in C:\Users\bharath-asus\miniconda3\envs\nlp_course\Lib\site-packages\spacy\data. This folder is just a shortcut to C:\Users\bharath-asus\miniconda3\envs\nlp_course\lib\site-packages\en_core_web_sm.

@@ -1,0 +1,391 @@
+= Regular Expressions 01 =
+:doctype: book
+:author: Bharath Kumar S P
+:email: bharath030195@gmail.com
+:stem: latexmath
+:toc:
+
+== Introduction ==
+Regular Expressions (sometimes called regex for short) are a way to search for patterns in a text document. Regular expressions are a feature that is supported by almost all programming languages.
+
+[quote, Wikipedia]
+A regular expression is a sequence of characters that define a search pattern.
+
+For example, there is a predefined pattern for a valid email address. Every character type has a corresponding pattern code. For example, digits have the placeholder pattern code of `\d`. Given a sales data table in csv, if we want to search for records with either Product1 or Product2 and State as NJ or NY, United States, we can use the following regular expression:
+
+----
+.*Product(1|2).*N(Y|J),United\sStates.*
+----
+
+IMPORTANT: Do not leave any space in between while writing the regex pattern.
+
+Regex engine does all the checks. A regex engine could be a part of any programming language or any text editors like Notepad++.
+
+== Generic Steps to Build Regex ==
+. Understand the requirement: What needs to be included? What needs to be excluded?
+. Identify patterns in the inclusion list or the exclusion list. Sometimes it might just be easier to come up with a regex for the exclusion list, and then negate that regex.
+. Come up with a regex pattern string to represent the inclusion list.
+. Use a regex engine like Python or Java to apply the regex pattern on the input. Linux commands like grep, sed, awk, etc also comes with a regex engine.
+
+Though regex engines share the same fundamental philosophy, the complete feature set of each regex engine may vary. But almost all major regex engines are POSIX standards compliant. Under POSIX standards, regex are divided into two sets: the basic set and the extended set.
+
+== The Basic Set ==
+The basic set comes with a set of symbols, each one having a specific meaning.
+
+* `\*` : An asterik. Matches zero or more occurrences of a character just preceding it. a* matches zero or more occurrences of `a`.
+* `.` : A wildcard. Matches *any* ONE character (digits, letters, punctuations, etc.)
+* `.\*`: A wildcard and asterik combo. Matches zero or more occurrences of a wildcard, which in turn matches zero or more occurrences of any character. When `.*` is used at the end, it matches all the things till the end of the line. (see an example below)
+* `\s`: Matches a single whitespace.
+
+Python uses built-in `re` library. When defining a pattern string in Python, we use the format: `r\my_pattern`. Placing the `r` in front of the string allows python to take it as raw strings as it is, without any changes.
+
+[source,python]
+----
+import re
+
+content = 'fooaaaabar\nfooabar\nfoobar\nfooaabar\nfooxxxbar\nfooxbar\n'
+re.findall(r'fooa*bar', content)
+# ['fooaaaabar', 'fooabar', 'foobar', 'fooaabar']
+
+content = 'foo2bar takes fooxybar and foovbar'
+re.findall(r'foo.bar', content)
+# ['foo2bar', 'foovbar']
+
+re.findall(r"...at","The bat went splat")
+['e bat', 'splat']
+
+content = 'foobar\nbarfoo\nfooabcbar\nfoobxcbar\nbarcbyfoo\nfoozbar\n'
+re.findall(r'foo.*bar', content)
+# ['foobar', 'fooabcbar', 'foobxcbar', 'foozbar']
+
+content = 'foo   bar\nfooxbar\nfooxxbar\nfoo bar\nfoo      bar\nfoobar\nfooyyybar\n'
+re.findall(r'foo\s*bar', content)
+# ['foo   bar', 'foo bar', 'foo      bar', 'foobar']
+
+re.findall(r'bhar.*', 'bharath kumar is a nice guy\nAnd he is great!')
+#['bharath kumar is a nice guy']
+----
+
+=== Character Classes ===
+
+* `[abc]`: Character class. Matches *one* of the characters inside the square brackets - a, b or c.
+* `[^abc]`: Character class beginning with a Caret symbol. Matches any *one* of the characters, EXCEPT those inside the square brackets - a, b or c.
+* `[a-c]`: *One* of the characters falling in the range given in square brackets - a, b, c.
+* `[a-cy]`: This is a combination of a range and individual letters. Matches *One* of the characters falling in the range given in square brackets - a, b, c OR any of the other choices given in square brackets - y.
+* `[a-cA-Cy]`: This is a combination of multiple ranges and individual letters. Matches *One* of the characters falling in one of the ranges given in square brackets - a, b, c, A, B, C OR any of the other choices given in square brackets - y.
+
+[source,python]
+----
+content = 'foo\nmoo\ncoo\ndoo\npoo\nloo\nboo\nhoo\n'
+re.findall(r'[fcl]oo', content)
+# ['foo', 'coo', 'loo']
+
+phrase = "There are 3 numbers 34 inside 5 this sentence."
+re.findall(r'[^\d]+',phrase)
+
+['there are ', ' numbers ', ' inside ', ' this sentence.']
+----
+
+It starts matching with the letters until it finds an excluded character. Each item in the returned list matches the given pattern. The negation operator can be used to remove punctuations, whitespaces from a sentence.
+
+[source,python]
+----
+test_phrase = 'This is a string! But it has punctuation. How can we remove it?'
+re.findall('[^!.? ]+',test_phrase)
+
+['This', 'is', 'a', 'string', 'But', 'it', 'has', 'punctuation', 'How', 'can', 'we', 'remove', 'it']
+
+clean = ' '.join(re.findall('[^!.? ]+',test_phrase))
+cleans
+'This is a string But it has punctuation How can we remove it'
+----
+
+=== Escaping with Backslash ===
+
+In regex, certain symbols are literals and certain symbols have special meaning. Following characters should be escaped with a backslash as these characters will be interpreted with special meaning in regex engine otherwise: `^$*.[()\`. Any character that immediately follows a backslash will be considered as a literal.
+
+* When `.` is inside square brackets, it needs not to be escaped. There are some symbols which do have special meaning inside square brackets: `-` for ranges and `^` for negation.
+
+** `[#:.]` matches any of the three symbols. 
+** `[#:\^]` matches any of the three symbols: #, :, or ^.
+** `[#\\\^]` matches any of #, \, ^.
+
+[source,python]
+----
+content = 'xxx.yy\nxx.yyyy\nx.yy\nxy\nxxyy\nyyxx\nyx\nyxxx\n'
+xxx.yy
+xx.yyyy
+x.yy
+xy
+xxyy
+yyxx
+yx
+yxxx
+
+re.findall(r'x*\.y*', content)
+# ['xxx.yy', 'xx.yyyy', 'x.yy']
+----
+
+=== Anchors ===
+
+* `^` is a placeholder that signifies beginning of a line. It does not match any character specifically. It is just an anchor which causes a regex pattern to be evaluated only by matching it with the beginning of the line. If we are using ^ as a placeholder, then it will always be the first thing in our regex pattern.
+
+* `$` is a placeholder that signifies the end of a line. If we are using $ as a placeholder, then it will always be the last thing in our regex pattern.
+
+In Python, by default, '^' matches only at the beginning of the string, and '$' only at the end of the string and immediately before the newline (if any) at the end of the string. When the flag `re.M` (representing MULTILINE mode) is enabled, the pattern character `^` matches at the beginning of the string and at the beginning of each line (immediately following each newline); and the pattern character `$` matches at the end of the string and at the end of each line (immediately preceding each newline).
+
+IMPORTANT: The interpretation of ^ differs within square brackets and outside of it. Inside square brackets, ^ stands for negation. Outside, it is a placeholder for beginning of a line.
+
+[source,python]
+----
+content = 'foo bar baz\nbar foo baz\nbaz foo bar\nbar baz foo\nfoo baz bar\nbaz bar foo\n'
+
+foo bar baz
+bar foo baz
+baz foo bar
+bar baz foo
+foo baz bar
+baz bar foo
+
+re.findall(r'^foo.*', content, re.M)
+# ['foo bar baz', 'foo baz bar']
+
+re.findall(r'^foo.*', content) #without re.M flag
+# ['foo bar baz']
+
+re.findall(r'.*bar$', content, re.M)
+# ['baz foo bar', 'foo baz bar']
+
+re.findall(r'.*bar$', content) #without re.M flag
+# []
+----
+
+The whole content is stored as a single string. Without the flag, ^ matches the pattern only with the beginning of the string. $ matches the pattern only with the end of the string.
+
+To match a line that starts with `foo` and ends with `foo` OR `foo` should be the only thing on the entire line:
+
+[source,python]
+----
+content = 'foo\nfoo bar\nbaz foo\nfoo bar baz\nbaz bar foo\n'
+
+foo
+foo bar
+baz foo
+foo bar baz
+baz bar foo
+
+re.findall(r'^foo$', content, re.M)
+# ['foo']
+----
+
+== The Extended Set ==
+The basic set comes with a set of symbols, each one having a specific meaning. When using grep's regex engine in Linux, the option `-E` is required if we are using any symbol from POSIX extended set.
+
+* `{m}` Curly Braces Repeater: Represents exactly `m` repetitions of whatever immediately precedes this. `a` in this case: `a{m}`. It matches to exactly `m` repetitions of the letter `a`.
+* `{m,n}`: Represents at least `m` repetitions and at most `n` repetitions of whatever immediately precedes this. `{m,}` represents at least `m` repetitions of whatever immediately precedes it. `{,n}` represents at most `n` repetitions of whatever immediately precedes it.
+
+[source,python]
+----
+content='834\n519\n4874\n5\n89\n45687\n25\n645\n'
+
+834
+519
+4874
+5
+89
+45687
+25
+645
+
+re.findall(r'^[0-9]{3}$', content, re.M)
+# ['834', '519', '645']
+
+lion
+tiger
+leopard
+fox
+kangaroo
+bat
+mouse
+cuckoo
+deer
+
+re.findall(r'^[a-z]{4,6}$', content, re.M)
+# ['lion', 'tiger', 'mouse', 'cuckoo', 'deer']
+----
+
+=== Group using Parenthesis ===
+
+Parenthesis is used to group characters and treat them as a single entity. These groups are interpreted as capturing groups by `re.findall()`. How `re.findall()` works?
+
+It returns a list of strings or tuples. The string is scanned left-to-right, and matches are returned in the order found. The result depends on the number of capturing groups in the pattern. If there are no groups, returns a list of strings matching the whole pattern. If there is exactly one group, returns a list of strings matching that group. If multiple groups are present, returns a list of tuples of strings matching the groups.
+
+[source,python]
+----
+content = 'ha\nhahahahaha\nhahaha\nhahahaha\nhaha\n\nhahahahahaha\nhahahahahahahaha\n'
+
+ha
+hahahahaha
+hahaha
+hahahaha
+haha
+
+hahahahahaha
+hahahahahahahaha
+
+re.findall(r'(ha){4,}', content)
+# ['ha', 'ha', 'ha', 'ha']
+----
+
+Here `(ha)` is treated as a single entity, the given pattern matches 4 strings. But the `findall()` function just returns a list of strings matching that group. To get a list of strings matching the whole pattern, we should use `re.finditer()`:
+
+NOTE: To make a group non-capturing, we can use `(?:...)` instead of `(...)`. Now there are no capturing group in the pattern, so `re.findall()` returns a list of strings matching the whole pattern.
+
+[source,python]
+----
+[match.group() for match in re.finditer(r'(ha){4,}', content)]
+
+#or re.findall(r'(?:ha){4,}', content)
+# ['hahahahaha',
+ 'hahahaha',
+ 'hahahahahaha',
+ 'hahahahahahahaha']
+
+content = 'ha\nhaha\nhahahahaha\nhahahaha\nhahaha\nhahahahahahaha\nhahahahahaha\n'
+ha
+haha
+hahahahaha
+hahahaha
+hahaha
+hahahahahahaha
+hahahahahaha
+
+[match.group() for match in re.finditer(r'^(ha){,2}$', content, re.M)]
+# ['ha', 'haha', ''] - there is a blank new line at the end.
+----
+
+* `+` Repeater: It represents one or more occurrences of the character just preceding it. `a+` matches one or more occurrences of `a`. NOTE: `a*` matches zero or more occurrences of `a`.
+* `?` Question mark Binary. This matches zero or one occurrence of the character just preceding it. `a?` matches zero or one occurrence of `a`.
+* `|` pipe symbol. `(a|b)` represents either `a` or `b`, where `a` and `b` can be multi-character strings. The parenthesis groups them in a single entity.
+
+[source,python]
+----
+content = 'fooaaaabar\nfooabar\nfoobar\nfooaabar\nfooxxxbar\nfooxbar\n'
+fooaaaabar
+fooabar
+foobar
+fooaabar
+fooxxxbar
+fooxbar
+
+re.findall(r'fooa+bar', content)
+# ['fooaaaabar', 'fooabar', 'fooaabar']
+
+content='https://website\nhttp://website\nhttpss://website\nhttpx://website\nhttpxx://website\n'
+https://website
+http://website
+httpss://website
+httpx://website
+
+re.findall(r'https?://website', content)
+# ['https://website', 'http://website']
+
+content='sapwood\nrosewood\nlogwood\nteakwood\nplywood\nredwood\n'
+sapwood
+rosewood
+logwood
+teakwood
+plywood
+redwood
+
+[match.group() for match in re.finditer(r'(log|ply)wood', content)]
+# ['logwood', 'plywood']
+----
+
+== Functions in `re` Library ==
+`match` is a match object which has a lot of methods and attributes. `re.search()` will take the pattern, scan the text, and then returns a Match object. If no pattern is found, a `None` is returned. If there are multiple matches, only the first instance is returned.
+
+[source,python]
+----
+text = "The agent's phone number is 408-555-1234. Call soon!"
+'phone' in text
+#output True
+
+#using re
+import re
+pattern = 'phone'
+match = re.search(pattern,text)
+match
+
+#output
+<_sre.SRE_Match object; span=(12, 17), match='phone'>
+
+match.span()  #(12, 17)
+match.start()  # 12
+match.end()  # 17
+match.group() #'phone' - returns the actual text that matched
+----
+
+If we want to find all the matches, we can use `re.finditer()`. This returns an iterator rather than a Match object.
+
+[source,python]
+----
+text = "my phone is a new phone"
+for match in re.finditer("phone",text):
+    print(match)
+
+#output
+<re.Match object; span=(3, 8), match='phone'>
+<re.Match object; span=(18, 23), match='phone'>
+----
+
+To get all the matched words to a given pattern in a string, use `re.findall()`. This returns a list of all the matched words.
+
+[source,python]
+----
+text = "my phone is a new phone"
+matches = re.findall(pattern="phone",string=text)
+
+matches
+# ['phone', 'phone']
+----
+
+== Summary ==
+
+*Identifiers for Characters in Patterns:*
+
+[cols="1,1,1,1,1"]
+|===
+|Identifier |Equivalent character class |Characters |Example Pattern Code |Example Match
+
+|\d |[0-9] |A digit |file_\d\d |file_25
+|\w |[a-zA-Z0-9_] |Alphanumeric |\w-\w\w\w |A-b_1
+|\s |[ \t\n\r\f\v] |White space |a\sb\sc |a b c
+|\D |[^0-9] |A non digit |\D\D\D |ABC
+|\W |[^a-zA-Z0-9_] |Non-alphanumeric |\W\W\W\W\W |*-+=)
+|\S |[^ \t\n\r\f\v] |Non-whitespace |\S\S\S\S |Yoyo
+|===
+
+[source,python]
+----
+# One or more non-whitespace that ends with 'at'
+re.findall(r'\S+at',"The bat went splat")
+['bat', 'splat']
+----
+
+*Quantifiers:*
+
+Now that we know the identifiers, we can use them along with quantifiers to define how many we expect. The quantifiers are specified after a character.
+
+[cols="1,1,1,1"]
+|===
+|Quantifier |Description |Example Pattern Code |Example Match
+
+|? |Once or none |plurals? |plural, plurals
+|+ |Occurs one or more times |Version \w-\w+ |Version A-b1_1
+|* |Occurs zero or more times. a* matches zero or more occurrences of `a` |fooa*bar |fooabar, fooaabar, foobar. Doesn't match with fooxxbar.
+|{3} |Occurs exactly 3 times |\D{3} |abc
+|{2,4} |Occurs 2 to 4 times |\d{2,4} |123
+|{3,}|Occurs 3 or more|\w{3,} |anycharacters
+|===
+

@@ -1,0 +1,83 @@
+= Skip-gram Model =
+:doctype: book
+:stem: latexmath
+:eqnums:
+:toc:
+
+=== How to Train ===
+We have stem:[2*d*V] parameters in total. The loss function is:
+
+[stem]
+++++
+J(\boldsymbol{\theta}) = - \frac{1}{T} \sum_{t=1}^T \sum_{-m\le j \le m, j\neq 0} \log P({w_{t+j}}|{w_t}; \boldsymbol{\theta})
+++++
+
+This is the total loss that we get by sliding over all the text in the corpus. Let's just look at the loss for a given central word stem:[c] and one of its context words stem:[o].
+
+[stem]
+++++
+\begin{align*}
+J_{c,o}(\boldsymbol{\theta}) & = -  \log P(c \, | \, o) \\
+
+& = - \log \frac{\text{exp}(\mathbf{u}^\top_o \mathbf{v}_c)}{\sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c)} \\
+
+& = - \log \text{exp}(\mathbf{u}^\top_o \mathbf{v}_c) + \log \sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c) \\
+& = - \mathbf{u}^\top_o \mathbf{v}_c + \log \sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c) \\
+\end{align*}
+++++
+
+Let's try to optimize the parameters stem:[\boldsymbol{\theta}] to minimize this loss. The parameters here are the word embeddings for the central word stem:[\mathbf{v}_c] and the output embeddings for all the words in the vocabulary stem:[\mathbf{u}_w], where stem:[w \in \text{Voc}].
+
+Let's find stem:[\frac{\partial J_{c,o}}{\partial \mathbf{v}_c}]: How the loss changes for a small change in the vector stem:[\mathbf{v}_c].
+
+[stem]
+++++
+\begin{align*}
+\frac{\partial J_{c,o}(\boldsymbol{\theta})}{\partial \mathbf{v}_c} & = \frac{\partial}{\partial \mathbf{v}_c} \left( - \mathbf{u}^\top_o \mathbf{v}_c + \log \sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c) \right) \\
+
+& = - \mathbf{u}_o + \frac{\partial}{\partial \mathbf{v}_c} \log \sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c) 
+\end{align*}
+++++
+
+Looking at the second term in this:
+
+[stem]
+++++
+\begin{align*}
+\frac{\partial}{\partial \mathbf{v}_c} \log \sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c)  & = 
+\frac{1}{\sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c)} \frac{\partial}{\partial \mathbf{v}_c} \sum_{w' \in \text{Voc}} \text{exp}(\mathbf{u}^\top_{w'} \mathbf{v}_c) \\
+
+& = 
+\frac{1}{\sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_o \mathbf{v}_c)}  \left[ \sum_{w' \in \text{Voc}} \frac{\partial}{\partial \mathbf{v}_c} \text{exp}(\mathbf{u}^\top_{w'} \mathbf{v}_c) \right] \\
+
+& = 
+\frac{1}{\sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_o \mathbf{v}_c)}  \left[ \sum_{w' \in \text{Voc}} \text{exp}(\mathbf{u}^\top_{w'} \mathbf{v}_c) \cdot \frac{\partial}{\partial \mathbf{v}_c} \mathbf{u}^\top_{w'} \mathbf{v}_c \right] \\
+
+& = 
+\frac{1}{\sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_o \mathbf{v}_c)}  \left[ \sum_{w' \in \text{Voc}} \text{exp}(\mathbf{u}^\top_{w'} \mathbf{v}_c) \cdot \mathbf{u}_{w'} \right] \\
+\\
+& = \sum_{w' \in \text{Voc}} \frac{\text{exp}(\mathbf{u}^\top_{w'} \mathbf{v}_c) }{\sum_{w \in \text{Voc}} \text{exp}(\mathbf{u}^\top_w \mathbf{v}_c)} \cdot \mathbf{u}_{w'} = \sum_{w' \in \text{Voc}} P(w' \, | \, c) \cdot {u}_{w'}
+\end{align*} 
+++++
+
+Combining all the results, we get
+
+[stem]
+++++
+\frac{\partial J_{c,o}}{\partial \mathbf{v}_c} = \sum_{w \in \text{Voc}} P(w \, | \, c) \cdot \mathbf{u}_w - \mathbf{u}_o
+++++
+
+Similarly, for each output embedding stem:[\mathbf{u}_w]:
+
+[stem]
+++++
+\frac{\partial J_{c,o}}{\partial \mathbf{u}_w} = (P(w \, | \, c) - \mathbf{1}(w = o)) \cdot \mathbf{v}_c
+++++
+
+* stem:[\mathbf{1}(w = o)] is 1 if stem:[w] is the true context word, otherwise 0.
+* stem:[P(w \, | \, c)] is the predicted probability.
+
+
+
+
+

@@ -1,0 +1,24 @@
+= NLP Basics =
+:doctype: book
+:author: Bharath Kumar S P
+:email: bharath030195@gmail.com
+:stem: latexmath
+:toc:
+
+== Introduction ==
+Once the corpus is created, modifications are required to make the text suitable for processing. Preprocessing steps are unique to a problem. Understanding the problem is very crucial in choosing preprocessing steps. Improper processing schemes may lead to loss of lexical context. Preprocessing consists of
+
+. Tokenization (Splitting the text into words)
+. Normalization (normalizing seconds, sec, s to a standard notation)
+. Substitution (substituting seconds, sec, s with a standard notation)
+
+In all these, we typically do:
+
+* Case folding - Convert all text into lower case
+* Stemming - running -> run
+* Lemmatization - best -> good
+* Remove misspellings
+* Remove punctuations
+* Remove white space, newline, tabs
+* Remove contradictions - isn't -> is not, I'd -> I would
+* Remove scripts, form variables for HTML and XML.
