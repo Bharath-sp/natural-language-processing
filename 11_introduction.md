@@ -38,3 +38,9 @@ This task is known as "Schema challenge" which is used as a benchmark to evaluat
 
 * Can we create a representative dataset that gives a model that generalizes well?
 * Given limited computational resources, can we identify a good subset of the data to train our model?
+
+## Resources
+
+1. Introduction to information retrieval Textbook by Christopher D. Manning, Hinrich Schütze, and Prabhakar Raghavan.  Cambridge UP. Available online at: https://nlp.stanford.edu/IR-book/pdf/irbookonlinereading.pdf
+
+2. Daniel Jurafsky and James H. Martin. 2026. Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models, 3rd edition. Available online at https://web.stanford.edu/~jurafsky/slp3/ed3book_jan26.pdf

@@ -40,7 +40,7 @@ In these representations, we have put information about contexts into the word r
 Using these two ideas, it is clear that all we need to do to represent a word is to put information about their contexts into the representation.
 
 ## Word2Vec
-Word2vec was presented in the paper titled "Efficient Estimation of Word Respresentations in Vector Space" by Tomas Mikolov et al. in 2013. Word2Vec is one of the most popular techniques for word embeddings. This technique can be used for learning high-quality word representations from huge data sets with billions of words in the vocabulary. It works on the assumption that the representation of a word is dictated by other surrounding words.
+Word2vec was presented in the paper titled "Efficient Estimation of Word Respresentations in Vector Space" by Tomas Mikolov et al. in 2013. Word2Vec is one of the most popular techniques for word embeddings. It is a **self-supervised** learning algorithm (input-target pairs are generated from the given data). This technique can be used for learning high-quality word representations from huge data sets with billions of words in the vocabulary. It works on the assumption that the representation of a word is dictated by other surrounding words.
 
 It gives a neural network-based **distributed representation** for words. In NLP, words can be represented using traditional local representation such as one-hot encoding or modern distributed representations such as Word2Vec.
 
@@ -115,22 +115,14 @@ The model architecture is: CBOW model predicts the current word $w_t$ based on t
 * All these word vectors are added and averaged. This gives a latent vector for the input context words.
 * The latent vector is fed into a standard softmax output layer.
 
-Each neuron in the output layer outputs the conditional probability for a word in the vocabulary given the context words. For the first input, we expect the model to output something like $[0.01, 0.01, 0.02, 0.9, 0.1, \dots ]$. That is, we want to maximize $P(w_t = \text{is} \, | \, \text{the, cat, walking, in})$. To compute this probability, we will be using the representation of $w_t$ and other words. We update these representations (via backpropagation) to maximize the probability. As the probability is maximized, the representations are improved.
+Each neuron in the output layer outputs the conditional probability for a word in the vocabulary given the context words. For the first input, we expect the model to output something like $[0.01, 0.01, 0.02, 0.9, 0.1, \dots ]$. That is, we want to maximize $P(w_t = \text{is} \, | \, \text{the, cat, walking, in})$.
 
-After training, we get a word vector for each word in our vocabulary, that is, the goal of this model is to find an appropriate matrix $\mathbf{C}$.
-
-## Results from Word2Vec Learnings
-The Word2Vec algorithm arranges words such that the distance between them reflects their similarity, i.e., grouping items together based on how similar they are.
-
-In the word embedding vector space, we observe that the words that are similar to each other semantically and syntactically are located close.
+After training, we get a word vector for each word in our vocabulary, that is, the goal of this model is to find an appropriate matrix $\mathbf{C}$. The matrix $\mathbf{C}$ is the matrix $\mathbf{W}$ below:
 
 <figure markdown="0" class="figure zoomable">
-<img src='./images/results_word2vec.png' alt="Observations from Word2Vec learnings" width=700><figcaption>
-  <strong>Figure 5.</strong> Observations from Word2Vec learnings
+<img src='./images/cbow_architecture.png' alt="CBOW model architecture" width=700><figcaption>
+  <strong>Figure 5.</strong> CBOW model architecture
   </figcaption>
 </figure>
 
-* King and Queen are related to royalty and are semantically similar. The same goes for the relationship between man and woman. On performing simple algebraic operations on the word vectors, it is observed that vector('King') - vector('Man') + vector('Woman') results in a vector that is closest to the vector representation of the word Queen.
-* King and Kings are syntactically or grammatically related.
-
-The figure on the right shows the two-dimensional PCA projection of the 1000-dimensional skip-gram vectors of countries and their capital cities. This illustrates the ability of the model to automatically organize concepts and learn implicitly the relationships between them even though no supervised learning information is provided during training.
+To compute the probabilities, we will be using the representation of $w_t$ and other words. We calculate the loss and back propagate it to update these representations with the objective of maximizing the probability. As the probability is maximized, the representations in $\mathbf{W}$ and $\mathbf{W}'$ are improved.

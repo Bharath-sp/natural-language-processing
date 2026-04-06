@@ -124,11 +124,11 @@ $$
 
 Here $c$ denotes the central and $o$ denotes outside word.
 
-The dot product of two vectors
+The dot-product gives the similarity strength between two vectors. It is
 
-* Is maximum when they are parallel to each other, meaning the angle between them is $0^{\circ}$.
-* Is zero when vectors are orthogonal $90^\circ$.
-* Is minimum when they are anti-parallel $180^\circ$.
+* Maximum when they are parallel to each other, meaning the angle between them is $0^{\circ}$.
+* Zero when vectors are orthogonal $90^\circ$.
+* Minimum when they are anti-parallel $180^\circ$.
 
 We take dot product between the two vectors, and to make it a probability score, we pass it through a softmax layer to normalize over the entire vocabulary.
 
@@ -247,7 +247,7 @@ Each row in $\mathbf{W}$ is the input embedding of a word. Therefore, each colum
 
 **Output Layer:**
 
-A weight matrix (output embedding matrix) $\mathbf{W}'_{d \times |V|}$ to compute the similarity score of each word $w_1, w_2, \dots, w_V$ in the vocabulary for the given central word $w_t$. Each column of this matrix $\mathbf{u}_{w_k}$ is the output embedding of word $w_k$ for $k=1,2,\dots, |V|$.
+A weight matrix (output embedding matrix) $\mathbf{W}'_{d \times |V|}$ to compute the similarity score between the central word $w_t$ and each word $w_1, w_2, \dots, w_V$ in the vocabulary. Each column of this matrix $\mathbf{u}_{w_k}$ is the output embedding of word $w_k$ for $k=1,2,\dots, |V|$.
 
 $$
 \mathbf{s} = \mathbf{W}'^T \mathbf{v}_c = 
@@ -265,9 +265,7 @@ s_{wV}
 \end{bmatrix}
 $$
 
-$s_{w_k}$ is the unnormalized similarity score between the central word $c$ and word $w_k$. The dot-product gives the similarity between two vectors.
-
-A softmax function is then applied that produces a probability distribution over the vocabulary. This gives us a probability vector of size $V$, $\hat{\mathbf{y}} = [\hat{y}_{w1}, \dots, \hat{y}_{wV}]$, with each element representing the probability $p(w_k \, | \, c)$.
+$s_{w_k}$ is the unnormalized similarity score between the central word $c$ and word $w_k$. A softmax function is then applied that produces a probability distribution over the vocabulary. This gives us a probability vector of size $V$, $\hat{\mathbf{y}} = [\hat{y}_{w1}, \dots, \hat{y}_{wV}]$, with each element representing the probability $p(w_k \, | \, c)$.
 
 $$
 \hat{y}_{w_k} = P(w_k \, | \, c; \boldsymbol{\theta}) = \frac{\text{exp}(s_{w_k})}{\sum_{w \in V} \text{exp}(s_{w})} = \frac{\text{exp}(\mathbf{u}^\top_{w_k} \mathbf{v}_c)}{\sum_{w \in V} \text{exp}(\mathbf{u}^\top_{w} \mathbf{v}_c)}
@@ -294,9 +292,4 @@ as $y_{wk} = 1$ only for the element where $w_k=o$ and 0 for all other elements.
 * If the model assigns a low probability to this context word, i.e., $\hat{y}_o = 0.1$, the loss is high $(L = - \log 0.1 \approx 2.33)$.
 
 We then back propagate these losses to update the parameters. The matrix $\mathbf{W}$ and $\mathbf{W}'$ are learnable parameters. Each word is represented as vector of size $d$, so in total there are $2*d*|V|$ numbers to be optimized.
-
-<div class="admonition note">
-  <p class="admonition-title">NOTE</p>
-  <p>The model we build here is actually a "fake-task" model. We train a model to perform a certain task, but we don't use the model for the task it is trained on. We train the model on a fake task, use a by-product (word vectors), and then we discard the rest of the model.</p>
-</div>
 

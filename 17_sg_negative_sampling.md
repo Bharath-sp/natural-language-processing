@@ -19,14 +19,18 @@ But why do we have to consider **all** context vectors in the vocabulary at each
   </figcaption>
 </figure>
 
-As before, we are increasing similarity between $c$ and $o$. What is different, is that now we decrease similarity between the central word $c$ and context vectors not for all words, but only with a subset of $K$ negative examples.
+As before, we are increasing similarity strength between $c$ and $o$. What is different, is that now we decrease similarity between the central word $c$ and context vectors not for all words, but only with a subset of $K$ negative examples. Here $K$ can be 10 to 15.
 
 We just update the output representation of $K$ negative samples, the output representation of the positive sample, and the input representation of the central word. In total, there will only be $K+2$ updates. As before, we are increasing similarity between $\mathbf{v}_c$ and $\mathbf{u}_o$. But now we decrease similarity only between $\mathbf{v}_c$ and context vectors $\mathbf{u}_{w1}, \dots, \mathbf{u}_{wK}$.
 
 Since we have a large corpus, on average over all updates we will update each vector sufficient number of times, and the vectors will still be able to learn well.
 
+**How to pick the negative samples:**
+
+Each word has only a few "true" contexts. Therefore, randomly chosen words are very likely to be "negative", i.e. not true contexts. Word2Vec randomly samples negative examples based on the (modified) empirical distribution of non-context words. The empirical distribution is modified to sample less frequent words more often.
+
 ## Objective Function
-Formally, the new loss function associated with a single pair $(c,o)$ is:
+Formally, the new loss function associated with a single pair $(c,o)$ is a contrastive loss function. We need to minimize this:
 
 $$
 \begin{align*}
@@ -38,6 +42,8 @@ J_{t,j}(\boldsymbol{\theta}) & = -\log\sigma(\mathbf{u}_o^T \mathbf{v}_c) -
 $$
 
 where $w_{i1},\dots, w_{iK}$ are the $K$ negative samples chosen at this step. There parameters involved in the objective function are $\mathbf{v}_c, \mathbf{u}_o, \mathbf{u}_{w1}, \dots, \mathbf{u}_{wK}$.
+
+In this formulation of the loss function, there is no probability involved; it just has the score for the positive word (the first term) and negative words (the second term).
 
 ### Update equation for $\mathbf{v}_c$:
 
@@ -97,4 +103,13 @@ $$
 & = \mathbf{u}_w + \eta (\sigma(-\mathbf{u}_w^T \mathbf{v}_c) - 1) \mathbf{v}_c \\
 \end{align*}
 $$
+
+## Standard Hyperparameters
+
+As always, the choice of hyperparameters usually depends on the task at hand. But somewhat standard settings are:
+
+* Model: Skip-Gram with negative sampling.
+* Number of negative examples: for smaller datasets, 15-20; for huge datasets it can be 2-5.
+* Embedding dimensionality: frequently used value is 300, but other variants (e.g., 100 or 50) are also possible.
+* Sliding window (context) size: 5-10.
 
