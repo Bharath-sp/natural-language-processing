@@ -21,8 +21,8 @@ $$
 $$
 
 * The columns of $\mathbf{U}$ are eigenvectors of $\mathbf{AA}^\top$. There will be $m$ orthogonal eigenvectors for $\mathbf{AA}^\top$ matrix. We stack them one after the other to get $\mathbf{U}$.
-* The columns of $\mathbf{V}$ are eigenvectors of $\mathbf{A}^\top\mathbf{A}$. There will be $n$ orthogonal eigenvectors for $\mathbf{A}^\top\mathbf{A}$ matrix. We stack them one below the other to get $\mathbf{V}$.
-* Eigenvalues $\lambda_1, \dots, \lambda_r$ of $\mathbf{AA}^\top$ are the eigenvalues of $\mathbf{A}^\top\mathbf{A}$, where $r = \text{rank}(\mathbf{A})$. Then, $\sigma_i = \sqrt{\lambda_i}$ (positive square root) are the diagonal entries of $\Sigma$. These singular values are placed in decreasing order.
+* The columns of $\mathbf{V}$ are eigenvectors of $\mathbf{A}^\top\mathbf{A}$. There will be $n$ orthogonal eigenvectors for $\mathbf{A}^\top\mathbf{A}$ matrix. We stack them one below the other to get $\mathbf{V}^\top$.
+* Positive eigenvalues $\lambda_1, \dots, \lambda_r$ of $\mathbf{AA}^\top$ are the eigenvalues of $\mathbf{A}^\top\mathbf{A}$, where $r = \text{rank}(\mathbf{A})$. Then, $\sigma_i = \sqrt{\lambda_i}$ (positive square root) are the diagonal entries of $\Sigma$. These singular values are placed in decreasing order.
 
 <figure markdown="0" class="figure zoomable">
 <img src='./images/svd_illustration.png' alt="SVD Decomposition Illustration" width=500><figcaption>

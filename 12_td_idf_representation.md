@@ -95,7 +95,7 @@ In the above collection, for document D1,
 * 'going':, TF is 1 and the IDF is 0.
 * 'to':, TF is 1 and the IDF is $\log \frac{3}{2}$.
 
-In the place of 1s and 0s in Figure 2, we will now store the TF*IDF value for each word in the document.
+In the place of 1s and 0s in Figure 3, we will now store the TF*IDF value for each word in the document.
 
 ### Limitations of these Representation Schemes
 The representations one-hot and TF-IDF are vector-space models. The basis vectors of this vector space are the different words in the vocabulary. Each document is represented as a point in this vector space. The drawbacks of this approach are:

@@ -38,7 +38,7 @@ The BPE algorithm has two parts: a trainer and an encoder:
 1. In the token training phase we take a raw training corpus (usually roughly pre-separated into words, for example by whitespace) and induce a vocabulary, a set of tokens.
 2. Then a token encoder takes a raw test sentence and encodes it into the tokens in the vocabulary that were learned during training.
 
-### BPE Training
+### Tokenizer Training
 The BPE training algorithm iteratively merges frequent neighboring tokens to create longer and longer tokens. The algorithm begins with a vocabulary that is just the set of all individual characters (including punctuation and whitespace characters). It then examines the training corpus, and finds the two characters that are most frequently adjacent.
 
 Imagine our original corpus is
@@ -75,8 +75,18 @@ The algorithm also takes a target vocabulary size as the input; typically it wil
 
 Suppose we did 256k merges, and our vocabulary approximately has 256k tokens. Now, due to some limitations, say we need to reduce the size of the vocabulary to only 64k tokens. Then we can simply take the top 64k merge rules from the learned merge rules; we don't have to rerun the BPE to get the vocabulary.
 
-### BPE Encoder (Inference)
-Once we've learned our vocabulary, the BPE encoder is used to tokenize a test sentence. The encoder just runs on the test data the merges we have learned from the training data. It runs them greedily, **in the order we learned** them. Thus, the frequencies in the test data don't play a role, just the frequencies in the training data. Suppose our learned merge rules are:
+<div class="admonition warning">
+  <p class="admonition-title">WARNING</p>
+  <p>Note here 'corpus' refers to the whole corpus we use to train the tokenizer. This corpus is different from the training data we use for our NLP model training.</p>
+</div>
+
+### Tokenizing the Training Data
+Once the tokenizer is learnt, we get the BPE encoder which has the learnt merge rules and a vocabulary. We then tokenize each word in the training data using the rules learnt. This is **deterministic** because a word is always segmented the same way. For example, every time we see the word "unhappiness" in the training data, we segment it as ["un", "happi", "ness"] (as per the learned merge rules).
+
+These tokens are then fed to the NLP model to carry out model training.
+
+### Inference
+During model inference, the BPE encoder is used to tokenize a test sentence. The encoder just runs on the test data the merges we have learned from the training data. It runs them greedily, **in the order we learned** them. Thus, the frequencies in the test data don't play a role, just the frequencies in the training data. Suppose our learned merge rules are:
 
 * `n e` $\to$ `ne`
 * `ne w` $\to$ `new`
@@ -101,7 +111,9 @@ The result is that most words can be represented as single tokens, and only the 
   <p>For multilingual systems, the tokens are often dominated by English, leaving fewer tokens for other languages.</p>
 </div>
 
-When working with existing models in NLP, we start with specifying the tokenizer. On loading it, the learned merge rules and vocabulary are loaded into the memory. Then, we feed in the raw text to get it tokenized as per the learned merge rules. 
+When working with existing models in NLP, we start with specifying the tokenizer. On loading it, the learned merge rules and vocabulary are loaded into the memory. Then, we feed in the raw text to get it tokenized as per the learned merge rules.
+
+These tokens are then fed into the model for inference.
 
 ## BPE in Practice
 We normally run BPE on the individual bytes of UTF-8-encoded text. That is, we take a Unicode representations of text as a series of code points, encode it in bytes using UTF-8, and we treat each of these individual bytes as the input to BPE.

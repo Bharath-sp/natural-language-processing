@@ -23,7 +23,7 @@ The topics themselves are unknown or latent. We observe only documents (which is
 
 Latent Dirichlet Allocation (LDA) is a probabilistic model used for topic modelling. The LDA model gives these outputs:
 
-1. Different topics present in the documents
+1. Different topics present in the document collection.
 2. For each topic, probability distribution over words
 3. For each document, what are the different topics discussed and how much? That is, it gives the proportion in which the topics are discussed.
 

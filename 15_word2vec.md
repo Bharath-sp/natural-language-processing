@@ -5,7 +5,7 @@ categories: [NLP]
 toc: true
 ---
 
-Can we come up with some technique that enforce the condition that if words are similar, their representation should be similar, and if documents are similar their representation should be similar?
+Can we come up with some technique that enforce the condition that if words are similar, their representation should be similar, and if documents are similar their representations should be similar?
 
 * TOC
 {:toc}

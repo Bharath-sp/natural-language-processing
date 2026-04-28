@@ -28,7 +28,7 @@ The Word2Vec model we build is actually a "fake-task" model. We train a model to
 Consider either the input or output representation of the words. It is observed that many semantic and syntactic relationships between words are (almost) linear in word vector space. For example
 
 * The difference between king and queen is (almost) the same as between man and woman. King and Queen are related to royalty and are semantically similar. The same goes for the relationship between man and woman. On performing simple algebraic operations on the word vectors, it is observed that vector('King') - vector('Man') + vector('Woman') results in a vector that is closest to the queen vector.
-* A word that is similar to queen in the same sense that kings is similar to king turns out to be queens. A word that is similar to 'fast' in the same sense that 'slow' is similar to 'slowest' turns out to be 'fasted' (syntactically or grammatically relation).
+* A word that is similar to queen in the same sense that kings is similar to king turns out to be queens. A word that is similar to 'fast' in the same sense that 'slow' is similar to 'slowest' turns out to be 'fastest' (syntactically or grammatically relation).
 
 <figure markdown="0" class="figure zoomable">
 <img src='./images/word2vec_analogies.png' alt="Linear structure in word vector space" width=400><figcaption>
